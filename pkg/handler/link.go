@@ -1,14 +1,13 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sergkim13/short-link-backend-go/pkg/model"
 )
 
-func (h * Handler) addLink(c *gin.Context) {
+func (h *Handler) addLink(c *gin.Context) {
 	var input model.LinkCreate
 
 	if err := c.BindJSON(&input); err != nil {
@@ -18,7 +17,7 @@ func (h * Handler) addLink(c *gin.Context) {
 
 	shortURL, err := h.services.Link.MakeShort(input.OriginalURL)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newErrorResponse(c, http.StatusInternalServerError, "something went wrong on server side")
 		return
 	}
 
@@ -29,7 +28,12 @@ func (h * Handler) addLink(c *gin.Context) {
 }
 
 func (h *Handler) getLink(c *gin.Context) {
-	url := c.Params.ByName("short")
-	resp := fmt.Sprintf("Short link: %s", url)
-	c.JSON(http.StatusOK, resp)
+	shortURL := c.Params.ByName("short")
+	originalURL, err := h.services.Link.GetLink(shortURL)
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.Redirect(http.StatusMovedPermanently, originalURL)
 }

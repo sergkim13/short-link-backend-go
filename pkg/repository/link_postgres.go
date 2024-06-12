@@ -31,6 +31,14 @@ func (r *LinkPostgres) GetShortByOriginalURL(originalURL string) (string, error)
 	return shortURL, err
 }
 
+func (r *LinkPostgres) GetOriginalByShirtURL(shortURL string) (string, error) {
+	var originalURL string
+	query := fmt.Sprintf("SELECT original FROM %s WHERE short = $1", linksTable)
+	err := r.db.Get(&originalURL, query, shortURL)
+
+	return originalURL, err
+}
+
 
 func NewLinkPostgres(db *sqlx.DB) *LinkPostgres {
 	return &LinkPostgres{db: db}

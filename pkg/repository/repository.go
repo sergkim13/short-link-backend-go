@@ -7,6 +7,7 @@ import (
 type Link interface {
 	AddLink(originalURL, shortURL string) (int, error)
 	GetShortByOriginalURL(originalURL string) (string, error)
+	GetOriginalByShirtURL(shortURL string) (string, error)
 }
 
 type Repository struct {

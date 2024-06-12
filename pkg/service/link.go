@@ -77,6 +77,17 @@ func (s *LinkService) generateHash(value string) string {
 	return shortURL
 }
 
+func (s *LinkService) GetLink(shortURL string) (string, error) {
+
+	originalURL, err := s.repo.GetOriginalByShirtURL(shortURL)
+
+	if err != nil {
+		return "", err
+	}
+
+	return originalURL, nil
+}
+
 func NewLinkService(repo repository.Link) *LinkService {
 	return &LinkService{repo: repo}
 }
