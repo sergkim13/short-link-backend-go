@@ -3,7 +3,6 @@ module github.com/sergkim13/short-link-backend-go
 go 1.21.5
 
 require (
-	github.com/caarlos0/env/v11 v11.0.1
 	github.com/gin-gonic/gin v1.10.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/lib/pq v1.10.9

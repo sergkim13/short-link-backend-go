@@ -13,14 +13,14 @@ type Config struct {
 	SSLMode       string `mapstructure:"DB_SSL_MODE"`
 	
 	Port          string `mapstructure:"PORT"`
+	LinksHost     string `mapstructure:"LINKS_HOST"`	
 }
 
 var EnvConfig *Config
 
 func loadEnvVariables() (config *Config) {
 	viper.AddConfigPath(".")
-	viper.SetConfigName("dev")
-	viper.SetConfigType("env")
+	viper.SetConfigFile(".env")
 
 	if err := viper.ReadInConfig(); err != nil {
 		logrus.Fatalf("error reading config file: %s", err.Error())
