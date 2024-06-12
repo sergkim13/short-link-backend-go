@@ -8,7 +8,7 @@ import (
 	"github.com/sergkim13/short-link-backend-go/pkg/model"
 )
 
-func (h * Handler) createLink(c *gin.Context) {
+func (h * Handler) addLink(c *gin.Context) {
 	var input model.LinkCreate
 
 	if err := c.BindJSON(&input); err != nil {
@@ -16,14 +16,15 @@ func (h * Handler) createLink(c *gin.Context) {
 		return
 	}
 
-	id, err := h.services.Link.CreateLink(input.OriginalURL)
+	shortURL, err := h.services.Link.MakeShort(input.OriginalURL)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	// return
-	c.JSON(http.StatusCreated, map[string]interface{}{"id": id})
+	c.JSON(http.StatusCreated, map[string]interface{}{
+		"short_url": shortURL,
+	})
 
 }
 

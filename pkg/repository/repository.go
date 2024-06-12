@@ -5,7 +5,8 @@ import (
 )
 
 type Link interface {
-	AddLink(originalURL, shortURL string) (string, error)
+	AddLink(originalURL, shortURL string) (int, error)
+	GetShortByOriginalURL(originalURL string) (string, error)
 }
 
 type Repository struct {

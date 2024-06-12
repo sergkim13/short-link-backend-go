@@ -13,7 +13,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 
 	{
-		router.POST("/make_short", h.createLink)
+		router.POST("/make_short", h.addLink)
 		router.GET("/:short", h.getLink)
 	}
 

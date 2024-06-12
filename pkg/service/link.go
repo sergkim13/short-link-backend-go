@@ -10,49 +10,71 @@ import (
 	"time"
 
 	"github.com/lib/pq"
+	"github.com/sergkim13/short-link-backend-go/configs"
 	"github.com/sergkim13/short-link-backend-go/pkg/repository"
+	"github.com/sirupsen/logrus"
 )
 
 type LinkService struct {
 	repo repository.Link
 }
 
+func (s *LinkService) MakeShort(originalURL string) (string, error) {
+	LinksHost := configs.EnvConfig.LinksHost
+
+	shortURL, err := s.CreateLink(originalURL)
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s/%s", LinksHost, shortURL), nil
+}
+
 func (s *LinkService) CreateLink(originalURL string) (string, error) {
 
-	shortLink := s.generateHash(originalURL)
+	shortURL := s.generateHash(originalURL)
 
-	res, err := s.repo.AddLink(originalURL, shortLink)
+	_, err := s.repo.AddLink(originalURL, shortURL)
+
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			if pqErr.Code == "23505" {
 				if strings.Contains(pqErr.Message, "links_original_key") {
-					return "", fmt.Errorf("original link %s already exists", originalURL)
+					logrus.Infof("original url %s already exists, returning it's short url", originalURL)
+
+					shortURL, err = s.repo.GetShortByOriginalURL(originalURL)
+
+					if err != nil {
+						logrus.Errorf("error while getting link by existnig original url %s: %s", originalURL, err.Error())
+						return "", err
+					}
+
+					return shortURL, nil
+
 				} else if strings.Contains(pqErr.Message, "links_short_key")  {
-					return "", fmt.Errorf("short link %s already exists", shortLink)
+					logrus.Infof("short url %s already exists, generating new one", originalURL)
+					shortURL, err := s.MakeShort(originalURL)
+
+					if err != nil {
+						logrus.Errorf("error while generating new short link for existing %s: %s", shortURL, err.Error())
+						return shortURL, err
+					}
 				}
 			}
 		}
 		return "", err
 	}
 
-	if res != "Ok" {
-		return "", err
-	}
-
-	return shortLink, nil
+	return shortURL, nil
 }
 
 func (s *LinkService) generateHash(value string) string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	randomNumber := strconv.FormatInt(r.Int63(), 10)
 	hash := sha256.Sum256([]byte(value + randomNumber))
-	shortLink := base64.URLEncoding.EncodeToString(hash[:6])
+	shortURL := base64.URLEncoding.EncodeToString(hash[:6])
 
-	return shortLink
-}
-
-func (s *LinkService) checkIfOriginalExists(originalURL string) bool {
-	return true
+	return shortURL
 }
 
 func NewLinkService(repo repository.Link) *LinkService {

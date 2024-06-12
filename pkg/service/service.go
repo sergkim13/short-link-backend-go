@@ -5,7 +5,7 @@ import (
 )
 
 type Link interface {
-	CreateLink(originalURL string) (string, error)
+	MakeShort(originalURL string) (string, error)
 }
 
 type Service struct {
