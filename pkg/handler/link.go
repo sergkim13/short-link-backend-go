@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"database/sql"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -32,7 +34,11 @@ func (h *Handler) getLink(c *gin.Context) {
 	originalURL, err := h.services.Link.GetLink(shortURL)
 
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		if err == sql.ErrNoRows {
+				newErrorResponse(c, http.StatusNotFound, fmt.Sprintf("original url for %s not found", shortURL))
+				return
+			}
+		newErrorResponse(c, http.StatusInternalServerError, "something went wrong on server side")
 		return
 	}
 	c.Redirect(http.StatusMovedPermanently, originalURL)
