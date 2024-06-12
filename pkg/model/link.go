@@ -1,10 +1,12 @@
 package model
 
+
+type LinkCreate struct {
+	OriginalURL string 	`json:"original_url" binding:"required"`
+}
 type Link struct {
-	Id 			int 	`json:"id"`
-	Original 	string 	`json:"original"`
-	Short 		string 	`json:"short"`
-	Clicks 		int 	`json:"clicks"`
+	Id 			int 	`json:"-"`
+	OriginalURL string 	`json:"original"`
+	ShortURL 	string 	`json:"short"`
 	CreatedAt 	string 	`json:"created_at"`
-	UpdatedAt 	string 	`json:"updated_at"`
 }

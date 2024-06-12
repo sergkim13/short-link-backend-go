@@ -1,9 +1,11 @@
 package repository
 
-import "github.com/jmoiron/sqlx"
+import (
+	"github.com/jmoiron/sqlx"
+)
 
 type Link interface {
-
+	AddLink(originalURL, shortURL string) (string, error)
 }
 
 type Repository struct {
@@ -11,5 +13,7 @@ type Repository struct {
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
-	return &Repository{}
+	return &Repository{
+		Link: NewLinkPostgres(db),
+	}
 }

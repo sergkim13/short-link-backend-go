@@ -5,10 +5,25 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sergkim13/short-link-backend-go/pkg/model"
 )
 
 func (h * Handler) createLink(c *gin.Context) {
-	c.JSON(http.StatusCreated, "Created")
+	var input model.LinkCreate
+
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	id, err := h.services.Link.CreateLink(input.OriginalURL)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	// return
+	c.JSON(http.StatusCreated, map[string]interface{}{"id": id})
 
 }
 
