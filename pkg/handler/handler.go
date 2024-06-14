@@ -12,10 +12,8 @@ type Handler struct {
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 
-	{
-		router.POST("/make_short", h.addLink)
-		router.GET("/:short", h.getLink)
-	}
+	router.POST("/make_short", h.addLink)
+	router.GET("/:short", h.getLink)
 
 	return router
 }
