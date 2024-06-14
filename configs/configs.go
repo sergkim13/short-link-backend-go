@@ -16,7 +16,7 @@ type Config struct {
 	LinksHost     string `mapstructure:"LINKS_HOST"`	
 }
 
-var EnvConfig *Config
+var EnvConfig *Config  //nolint:gochecknoglobals
 
 func loadEnvVariables() (config *Config) {
 	viper.AddConfigPath(".")

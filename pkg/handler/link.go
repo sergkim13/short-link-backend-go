@@ -2,6 +2,7 @@ package handler
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -14,12 +15,14 @@ func (h *Handler) addLink(c *gin.Context) {
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error(), err.Error())
+
 		return
 	}
 
 	shortURL, err := h.services.Link.MakeShort(input.OriginalURL)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, "something went wrong on server side", err.Error())
+
 		return
 	}
 
@@ -33,7 +36,7 @@ func (h *Handler) getLink(c *gin.Context) {
 	originalURL, err := h.services.Link.GetLink(shortURL)
 
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 				newErrorResponse(c, http.StatusNotFound, fmt.Sprintf("original url for %s not found", shortURL), err.Error())
 				return
 			}

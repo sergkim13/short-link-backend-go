@@ -12,15 +12,15 @@ type LinkPostgres struct {
 }
 
 func (r *LinkPostgres) AddLink(originalURL, shortURL string) (int, error) {
-	var id int
+	var linkID int
 	query := fmt.Sprintf("INSERT INTO %s (original, short) values ($1, $2) RETURNING id", linksTable)
 	row := r.db.QueryRow(query, originalURL, shortURL)
 
-	if err := row.Scan(&id); err != nil {
+	if err := row.Scan(&linkID); err != nil {
 		return 0, err
 	}
 
-	return id, nil
+	return linkID, nil
 }
 
 func (r *LinkPostgres) GetShortByOriginalURL(originalURL string) (string, error) {
