@@ -3,9 +3,9 @@ linters:
     - style
   disable:
     #   - err113
-    #   - exhaustruct
+    - exhaustruct
     - depguard
-  #   - nonamedreturns
+    - nonamedreturns
 linters-settings:
   gocritic:
     enable-all: true

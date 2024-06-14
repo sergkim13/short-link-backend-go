@@ -18,7 +18,7 @@ func (r *LinkPostgres) AddLink(originalURL, shortURL string) (int, error) {
 	row := r.db.QueryRow(query, originalURL, shortURL)
 
 	if err := row.Scan(&linkID); err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to INSERT link with original url - %s, and short url %s: %w", originalURL, shortURL, err)
 	}
 
 	return linkID, nil
@@ -30,7 +30,11 @@ func (r *LinkPostgres) GetShortByOriginalURL(originalURL string) (string, error)
 	query := fmt.Sprintf("SELECT short FROM %s WHERE original = $1", linksTable)
 	err := r.db.Get(&shortURL, query, originalURL)
 
-	return shortURL, err
+	if err != nil {
+		return "", fmt.Errorf("failed to SELECT link with original url - %s: %w", originalURL, err)
+	}
+
+	return shortURL, nil
 }
 
 func (r *LinkPostgres) GetOriginalByShortURL(shortURL string) (string, error) {
@@ -39,7 +43,11 @@ func (r *LinkPostgres) GetOriginalByShortURL(shortURL string) (string, error) {
 	query := fmt.Sprintf("SELECT original FROM %s WHERE short = $1", linksTable)
 	err := r.db.Get(&originalURL, query, shortURL)
 
-	return originalURL, err
+	if err != nil {
+		return "", fmt.Errorf("failed to SELECT link with short url - %s: %w", shortURL, err)
+	}
+
+	return originalURL, nil
 }
 
 

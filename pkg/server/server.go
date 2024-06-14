@@ -12,15 +12,15 @@ type Server struct {
 }
 
 func (s *Server) Run(port string, handler http.Handler) error {
-	s.httpServer = &http.Server{ 			//nolint:exhaustruct no need to init all params
+	s.httpServer = &http.Server{
 		Addr:           ":" + port,
 		Handler:        handler,
-		MaxHeaderBytes: 1 << 20,  			//nolint:mnd
-		ReadTimeout:    10 * time.Second,  	//nolint:mnd 10 seconds
-		WriteTimeout:   10 * time.Second,  	//nolint:mnd 10 seconds
+		MaxHeaderBytes: 1 << 20,  			//nolint:mnd //1024 KB
+		ReadTimeout:    10 * time.Second,  	//nolint:mnd //10 seconds
+		WriteTimeout:   10 * time.Second,  	//nolint:mnd //10 seconds
 	}
 
-	return s.httpServer.ListenAndServe()
+	return s.httpServer.ListenAndServe()	//nolint:wrapcheck //handled on higher level
 }
 
 func (s *Server) Shutdown(ctx context.Context) error {

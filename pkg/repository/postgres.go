@@ -10,17 +10,17 @@ import (
 
 const linksTable = "links"
 
-func NewPostgresDB(cfg configs.Config) (*sqlx.DB, error) {
+func NewPostgresDB(cfg *configs.Config) (*sqlx.DB, error) {
 	database, err := sqlx.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 		cfg.DBHost, cfg.DBPort, cfg.DBUser, cfg.DBName, cfg.DBPassword, cfg.SSLMode))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to initialize db: %w", err)
 	}
 
 	err = database.Ping()
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to ping db: %w", err)
 	}
 
 	return database, nil

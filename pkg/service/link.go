@@ -3,6 +3,7 @@ package service
 import (
 	"crypto/sha256"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"math/rand"
 	"strconv"
@@ -36,17 +37,16 @@ func (s *LinkService) CreateLink(originalURL string) (string, error) {
 	_, err := s.repo.AddLink(originalURL, shortURL)
 
 	if err != nil {
-		if pqErr, ok := err.(*pq.Error); ok {
+		wrappedErr := errors.Unwrap(err)
+		if pqErr, ok := wrappedErr.(*pq.Error); ok {
 			if pqErr.Code == "23505" {
 				if strings.Contains(pqErr.Message, "links_original_key") {
 					logrus.Infof("original url %s already exists, returning it's short url", originalURL)
 
-					shortURL, err = s.repo.GetShortByOriginalURL(originalURL)
+					shortURL, err := s.repo.GetShortByOriginalURL(originalURL)
 
 					if err != nil {
-						logrus.Errorf("error while getting link by existnig original url %s: %s", originalURL, err.Error())
-
-						return "", err
+						return "", fmt.Errorf("error while getting link by existnig original url %s: %w", originalURL, err)
 					}
 
 					return shortURL, nil
@@ -55,15 +55,13 @@ func (s *LinkService) CreateLink(originalURL string) (string, error) {
 					shortURL, err := s.MakeShort(originalURL)
 
 					if err != nil {
-						logrus.Errorf("error while generating new short link for existing %s: %s", shortURL, err.Error())
-
-						return shortURL, err
+						return "", fmt.Errorf("error while generating new short link for existing short url %s: %w", shortURL, err)
 					}
 				}
 			}
 		}
 
-		return "", err
+		return "", fmt.Errorf("error while creating link for original url %s: %w", originalURL, err)
 	}
 
 	return shortURL, nil
@@ -82,7 +80,7 @@ func (s *LinkService) GetLink(shortURL string) (string, error) {
 	originalURL, err := s.repo.GetOriginalByShortURL(shortURL)
 
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("error while getting original url by short url %s: %w", shortURL, err)
 	}
 
 	return originalURL, nil

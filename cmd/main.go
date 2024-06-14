@@ -14,7 +14,7 @@ import (
 func main() {
     configs.InitConfig()
 
-    db, err := repository.NewPostgresDB(*configs.EnvConfig)
+    db, err := repository.NewPostgresDB(configs.EnvConfig)
     if err != nil {
         logrus.Fatalf("failed to initialize db: %s", err.Error())
     }
