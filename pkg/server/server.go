@@ -12,7 +12,7 @@ type Server struct {
 }
 
 func (s *Server) Run(port string, handler http.Handler) error {
-	s.httpServer = &http.Server{ 			//nolint:exhaustruct
+	s.httpServer = &http.Server{ 			//nolint:exhaustruct no need to init all params
 		Addr:           ":" + port,
 		Handler:        handler,
 		MaxHeaderBytes: 1 << 20,  			//nolint:mnd

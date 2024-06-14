@@ -30,7 +30,7 @@ func loadEnvVariables() (config *Config) {
 		logrus.Fatalf("error unmarshaling config file: %s", err.Error())
 	}
 
-	return
+	return config
 }
 
 
