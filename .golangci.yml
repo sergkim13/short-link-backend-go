@@ -1,0 +1,11 @@
+linters:
+  presets:
+    - style
+  disable:
+    #   - err113
+    #   - exhaustruct
+    - depguard
+  #   - nonamedreturns
+linters-settings:
+  gocritic:
+    enable-all: true
