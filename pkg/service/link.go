@@ -45,6 +45,7 @@ func (s *LinkService) CreateLink(originalURL string) (string, error) {
 
 					if err != nil {
 						logrus.Errorf("error while getting link by existnig original url %s: %s", originalURL, err.Error())
+
 						return "", err
 					}
 
@@ -55,11 +56,13 @@ func (s *LinkService) CreateLink(originalURL string) (string, error) {
 
 					if err != nil {
 						logrus.Errorf("error while generating new short link for existing %s: %s", shortURL, err.Error())
+
 						return shortURL, err
 					}
 				}
 			}
 		}
+
 		return "", err
 	}
 
@@ -76,7 +79,7 @@ func (s *LinkService) generateHash(value string) string {
 }
 
 func (s *LinkService) GetLink(shortURL string) (string, error) {
-	originalURL, err := s.repo.GetOriginalByShirtURL(shortURL)
+	originalURL, err := s.repo.GetOriginalByShortURL(shortURL)
 
 	if err != nil {
 		return "", err
