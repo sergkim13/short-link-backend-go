@@ -31,7 +31,6 @@ func (s *LinkService) MakeShort(originalURL string) (string, error) {
 }
 
 func (s *LinkService) CreateLink(originalURL string) (string, error) {
-
 	shortURL := s.generateHash(originalURL)
 
 	_, err := s.repo.AddLink(originalURL, shortURL)
@@ -50,7 +49,6 @@ func (s *LinkService) CreateLink(originalURL string) (string, error) {
 					}
 
 					return shortURL, nil
-
 				} else if strings.Contains(pqErr.Message, "links_short_key")  {
 					logrus.Infof("short url %s already exists, generating new one", originalURL)
 					shortURL, err := s.MakeShort(originalURL)
@@ -78,7 +76,6 @@ func (s *LinkService) generateHash(value string) string {
 }
 
 func (s *LinkService) GetLink(shortURL string) (string, error) {
-
 	originalURL, err := s.repo.GetOriginalByShirtURL(shortURL)
 
 	if err != nil {

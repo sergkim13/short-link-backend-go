@@ -26,7 +26,6 @@ func (h *Handler) addLink(c *gin.Context) {
 	c.JSON(http.StatusCreated, map[string]interface{}{
 		"short_url": shortURL,
 	})
-
 }
 
 func (h *Handler) getLink(c *gin.Context) {
