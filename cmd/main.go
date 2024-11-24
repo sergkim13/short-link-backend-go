@@ -16,7 +16,7 @@ func main() {
 
     db, err := repository.NewPostgresDB(configs.EnvConfig)
     if err != nil {
-        logrus.Fatalf("failed to initialize db: %s", err.Error())
+        logrus.Fatalf("error occurred while connecting to db: %s", err.Error())
     }
 
     repos := repository.NewRepository(db)
